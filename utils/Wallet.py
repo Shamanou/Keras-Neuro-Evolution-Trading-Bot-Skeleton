@@ -7,7 +7,7 @@ class Wallet:
         self.trading_fee = trading_fee
         self.cash_wallet = [starting_cash] * len(starting_price)
         self.btc_wallet = [0] * len(starting_price)
-        self.isHolding = False
+        self.isHolding = [True] * len(starting_price)
         self.starting_price = starting_price
         self.current_buy = None
         self.old_cash_wallet = [1] * len(starting_price)
@@ -15,9 +15,9 @@ class Wallet:
         self.trade_history = []
 
     def buy(self, idx, price):
-        if not self.isHolding:
+        if not self.isHolding[idx]:
             self.current_buy = price
-            self.btc_wallet[idx] = self.cash_wallet[idx] / price * (1 - self.trading_fee)
+            self.btc_wallet[idx] += self.cash_wallet[idx] / price * (1 - self.trading_fee)
 
             self.cash_history.append([idx, self.cash_wallet[idx]])
             self.trade_history.append(
@@ -26,11 +26,11 @@ class Wallet:
 
             self.old_cash_wallet[idx] = self.cash_wallet[idx]
             self.cash_wallet[idx] = 0
-            self.isHolding = True
+            self.isHolding[idx] = True
 
     def sell(self, idx, price):
-        if self.isHolding:
-            self.cash_wallet[idx] = self.btc_wallet[idx] * price * (1 - self.trading_fee)
+        if self.isHolding[idx]:
+            self.cash_wallet[idx] += self.btc_wallet[idx] * price * (1 - self.trading_fee)
 
             self.cash_history.append([idx, self.cash_wallet[idx]])
             self.trade_history.append(
@@ -38,7 +38,7 @@ class Wallet:
                  self.btc_wallet[idx]])
 
             self.btc_wallet[idx] = 0
-            self.isHolding = False
+            self.isHolding[idx] = False
 
     def get_holding_earnings(self, final_price):
         score = []
