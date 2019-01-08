@@ -172,16 +172,18 @@ class Population(object):
         c = 0
         profit_arr = []
         for agent in self.agents:
+            profit_tmp = []
             for i in range(len(prices)):
-                profit_arr.append(agent.wallet.get_swing_earnings(i, prices[i]))
+                profit_tmp.append(agent.wallet.get_swing_earnings(i, prices[i]))
+            profit_arr.append(np.average(profit_tmp))
         profit_arr.sort()
 
         output_str = "\naverage profit: {0:.2f}%\n".format(np.average(profit_arr))
-        # for score in profit_arr:
-        #     output_str += "{0:.2f}%".format(score).ljust(12)
-        #     c += 1
-        #     if c % output_width == 0:
-        #         output_str += "\n"
+        for score in profit_arr:
+            output_str += "{0:.2f}%".format(score).ljust(12)
+            c += 1
+            if c % output_width == 0:
+                output_str += "\n"
         print(output_str)
 
     def save_best_agent(self):

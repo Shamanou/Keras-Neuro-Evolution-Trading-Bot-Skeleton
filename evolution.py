@@ -29,12 +29,12 @@ if __name__ == '__main__':
 
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-    pop_size = 100
+    pop_size = 50
     mutation_rate = 0.05
     mutation_scale = 0.3
     starting_cash = 1
     trading_fee = 0.01
-    generations = 10
+    generations = 150
 
     # generate random test data
     np.random.seed(42)
