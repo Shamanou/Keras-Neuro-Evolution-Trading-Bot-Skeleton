@@ -170,7 +170,10 @@ class Population(object):
         c = 0
         profit_arr = []
         for agent in self.agents:
-            profit_arr.append(agent.wallet.get_swing_earnings(len(prices), prices[-1]))
+            tmp_profit_arr = []
+            for i in range(len(prices)):
+                tmp_profit_arr.append(agent.wallet.get_swing_earnings(i, prices[i]))
+            profit_arr.append(np.average(tmp_profit_arr))
         profit_arr.sort()
 
         output_str = "\naverage profit: {0:.2f}%\n".format(np.average(profit_arr))

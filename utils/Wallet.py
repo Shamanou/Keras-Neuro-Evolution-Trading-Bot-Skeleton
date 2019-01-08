@@ -34,7 +34,7 @@ class Wallet:
                 self.btc_wallet = 0
                 self.isHolding = False
 
-    def get_holding_earnings(self, final_price):
+    def get_holding_earnings(self,final_price):
         return (final_price / self.starting_price) * 100 - 100
 
     def get_swing_earnings(self, idx, final_price):
