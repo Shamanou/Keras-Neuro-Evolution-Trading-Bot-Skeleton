@@ -4,12 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from keras import backend as K
 from keras.models import model_from_json
-
+import ccxt
 from utils.Agent import Agent
+markets = ccxt.kraken().load_markets()
 
 
 class Population(object):
-    def __init__(self, pop_size, model_builder, mutation_rate, mutation_scale, starting_cash, starting_price,
+    def __init__(self, pop_size, model_builder, mutation_rate, mutation_scale, starting_cash,
                  trading_fee, big_bang=True, remove_sleep=False, one_output=False, dump_trades=False, dump_file=None):
         self.pop_size = pop_size
         self.agents = []
@@ -18,7 +19,8 @@ class Population(object):
         self.mutation_rate = mutation_rate
         self.mutation_scale = mutation_scale
         self.starting_cash = starting_cash
-        self.starting_price = starting_price
+        inputs = ccxt.kraken().fetch_tickers(markets.keys())
+        self.starting_price = [float(inputs[key]['info']['a'][0]) for key in inputs]
         self.trading_fee = trading_fee
 
         self.has_sleep_functionality = not remove_sleep
@@ -45,7 +47,7 @@ class Population(object):
             self.agents.append(Agent(self, i, inherited_model=model))
 
     def validate(self, inputs_list, prices_list, output_width=5, plot_best=True):
-        season_num = None
+        season_num = 10
         self.batch_feed_inputs(inputs_list, prices_list)
         self.print_profits(output_width, prices_list)
         self.normalize_fitness()
@@ -55,7 +57,7 @@ class Population(object):
         if self.dump_trades == True:
             self.agents[0].wallet.dump_trades(self.dump_file)
 
-    def evolve(self, inputs_list, prices_list, output_width=5, plot_best=False, season_num=None):
+    def evolve(self, inputs_list, prices_list, output_width=10, plot_best=False, season_num=None):
         print("\n======================\ngeneration number {}\n======================".format(self.generation_number))
 
         self.batch_feed_inputs(inputs_list, prices_list)
@@ -170,18 +172,16 @@ class Population(object):
         c = 0
         profit_arr = []
         for agent in self.agents:
-            tmp_profit_arr = []
             for i in range(len(prices)):
-                tmp_profit_arr.append(agent.wallet.get_swing_earnings(i, prices[i]))
-            profit_arr.append(np.average(tmp_profit_arr))
+                profit_arr.append(agent.wallet.get_swing_earnings(i, prices[i]))
         profit_arr.sort()
 
         output_str = "\naverage profit: {0:.2f}%\n".format(np.average(profit_arr))
-        for score in profit_arr:
-            output_str += "{0:.2f}%".format(score).ljust(12)
-            c += 1
-            if c % output_width == 0:
-                output_str += "\n"
+        # for score in profit_arr:
+        #     output_str += "{0:.2f}%".format(score).ljust(12)
+        #     c += 1
+        #     if c % output_width == 0:
+        #         output_str += "\n"
         print(output_str)
 
     def save_best_agent(self):
