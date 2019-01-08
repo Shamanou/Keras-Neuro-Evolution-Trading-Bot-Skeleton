@@ -36,7 +36,7 @@ class Population(object):
 
         if big_bang == True:
             for i in range(self.pop_size):
-                print("\rbuilding agents {:.2f}%...".format((i + 1) / self.pop_size * 100), end="")
+                print("\rbuilding agents {:.5f}%...".format((i + 1) / self.pop_size * 100), end="")
                 agent = Agent(self, i)
                 self.agents.append(agent)
         print("")
@@ -95,7 +95,7 @@ class Population(object):
     def batch_feed_inputs(self, inputs_list, prices_list):
         for i in range(len(self.agents)):
             self.agents[i].batch_act(inputs_list,prices_list)
-            print("\rFeeding inputs {:.2f}%...".format((i + 1) / self.pop_size * 100), end="")
+            print("\rFeeding inputs {:.5f}%...".format((i + 1) / self.pop_size * 100), end="")
 
     def normalize_fitness(self):
         print("normalizing fitness...")
@@ -153,7 +153,7 @@ class Population(object):
         # reload models
         newAgents = []
         for i in range(self.pop_size):
-            print("\rcreating next generation {0:.2f}%...".format((i + 1) / self.pop_size * 100), end="")
+            print("\rcreating next generation {0:.5f}%...".format((i + 1) / self.pop_size * 100), end="")
             loaded = model_from_json(configs[i])
             loaded.set_weights(weights[i])
             newAgents.append(Agent(self, i, inherited_model=loaded))
@@ -178,9 +178,9 @@ class Population(object):
             profit_arr.append(np.average(profit_tmp))
         profit_arr.sort()
 
-        output_str = "\naverage profit: {0:.2f}%\n".format(np.average(profit_arr))
+        output_str = "\naverage profit: {0:.5f}%\n".format(np.average(profit_arr))
         for score in profit_arr:
-            output_str += "{0:.2f}%".format(score).ljust(12)
+            output_str += "{0:.5f}%".format(score).ljust(12)
             c += 1
             if c % output_width == 0:
                 output_str += "\n"

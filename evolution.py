@@ -12,7 +12,7 @@ markets = ccxt.kraken().load_markets()
 
 def build_model():
     num_inputs = len(ccxt.kraken().fetch_tickers(markets.keys()))
-    hidden_nodes = 128
+    hidden_nodes = 16
     num_outputs = 3
 
     model = Sequential()
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     pop_size = 50
     mutation_rate = 0.05
     mutation_scale = 0.3
-    starting_cash = 1
+    starting_cash = 50
     trading_fee = 0.01
     generations = 150
 

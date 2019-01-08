@@ -67,7 +67,10 @@ class Agent(object):
                 self.wallet.sell(idx, prices[idx])
 
         # evaluate score
-        self.score = self.wallet.get_swing_earnings(-1, prices[-1])
+        score = []
+        for i in range(len(prices)):
+            score.append(self.wallet.get_swing_earnings(i, prices[i]))
+        self.score = np.average(score)
 
     def save(self, filename):
         model_json = self.model.to_json()
