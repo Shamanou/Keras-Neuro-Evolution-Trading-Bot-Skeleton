@@ -1,15 +1,16 @@
-from utils.Agent import Agent
-from keras import backend as K
-from keras.models import load_model, model_from_json
-
-import matplotlib.pyplot as plt
-
-import numpy as np
-import os
 import random
 
+import matplotlib.pyplot as plt
+import numpy as np
+from keras import backend as K
+from keras.models import model_from_json
+
+from utils.Agent import Agent
+
+
 class Population(object):
-    def __init__(self, pop_size, model_builder, mutation_rate, mutation_scale, starting_cash, starting_price, trading_fee, big_bang=True, remove_sleep=False, one_output=False, dump_trades=False, dump_file=None):
+    def __init__(self, pop_size, model_builder, mutation_rate, mutation_scale, starting_cash, starting_price,
+                 trading_fee, big_bang=True, remove_sleep=False, one_output=False, dump_trades=False, dump_file=None):
         self.pop_size = pop_size
         self.agents = []
 
@@ -91,7 +92,7 @@ class Population(object):
 
     def batch_feed_inputs(self, inputs_list, prices_list):
         for i in range(len(self.agents)):
-            self.agents[i].batch_act(inputs_list, prices_list)
+            self.agents[i].batch_act(inputs_list,prices_list)
             print("\rFeeding inputs {:.2f}%...".format((i + 1) / self.pop_size * 100), end="")
 
     def normalize_fitness(self):
@@ -140,7 +141,7 @@ class Population(object):
             newAgents_idx.append(self.pool_selection())
 
         # temporarily save models and clear session
-        configs, weights = [], []    
+        configs, weights = [], []
         for model_idx in newAgents_idx:
             configs.append(self.agents[model_idx].model.to_json())
             weights.append(self.agents[model_idx].model.get_weights())
@@ -163,7 +164,7 @@ class Population(object):
         # self.mutation_scale *= 0.95
 
     def sort_by_decreasing_fitness(self):
-        self.agents.sort(key=lambda x: x.fitness, reverse=True)        
+        self.agents.sort(key=lambda x: x.fitness, reverse=True)
 
     def print_profits(self, output_width, prices):
         c = 0

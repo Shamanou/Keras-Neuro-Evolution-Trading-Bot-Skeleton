@@ -13,23 +13,26 @@ class Wallet:
 
     def buy(self, idx, price):
         if not self.isHolding:
-            self.current_buy = price
+            if price:
+                self.current_buy = price
+                self.btc_wallet = self.cash_wallet / price * (1 - self.trading_fee)
             
-            self.btc_wallet = self.cash_wallet / price * (1 - self.trading_fee)
-            
-            self.old_cash_wallet = self.cash_wallet
-            self.cash_wallet = 0
-            self.isHolding = True
+                self.old_cash_wallet = self.cash_wallet
+                self.cash_wallet = 0
+                self.isHolding = True
 
     def sell(self, idx, price):
         if self.isHolding:
-            self.cash_wallet = self.btc_wallet * price * (1 - self.trading_fee)
+            if price:
+                self.cash_wallet = self.btc_wallet * price * (1 - self.trading_fee)
 
-            self.cash_history.append([idx, self.cash_wallet])
-            self.trade_history.append([idx, price, self.cash_wallet, self.cash_wallet / self.old_cash_wallet * 100 - 100, self.btc_wallet])
+                self.cash_history.append([idx, self.cash_wallet])
+                self.trade_history.append(
+                    [idx, price, self.cash_wallet, self.cash_wallet / self.old_cash_wallet * 100 - 100,
+                     self.btc_wallet])
 
-            self.btc_wallet = 0
-            self.isHolding = False
+                self.btc_wallet = 0
+                self.isHolding = False
 
     def get_holding_earnings(self, final_price):
         return (final_price / self.starting_price) * 100 - 100

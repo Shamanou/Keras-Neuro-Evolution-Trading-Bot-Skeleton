@@ -1,7 +1,9 @@
-from utils.Wallet import Wallet
-from keras.models import clone_model
-import numpy as np
 import os
+
+import numpy as np
+
+from utils.Wallet import Wallet
+
 
 class Agent(object):
     def __init__(self, population, agent_id, inherited_model=None):
@@ -29,7 +31,7 @@ class Agent(object):
         # converting output to trade signals
         encodeds = []
 
-        if self.population.has_one_output == True:
+        if self.population.has_one_output:
             for prediction in predictions:
                 if prediction[0] >= 0:
                     encodeds.append(self.BUY)
@@ -38,13 +40,18 @@ class Agent(object):
         else:
             if (self.population.has_sleep_functionality):
                 for prediction in predictions:
-                    if np.argmax(prediction) == 0: encodeds.append(self.BUY)
-                    elif np.argmax(prediction) == 1: encodeds.append(self.SELL)
-                    else: encodeds.append(self.SLEEP)
+                    if np.argmax(prediction) == 0:
+                        encodeds.append(self.BUY)
+                    elif np.argmax(prediction) == 1:
+                        encodeds.append(self.SELL)
+                    else:
+                        encodeds.append(self.SLEEP)
             else:
                 for prediction in predictions:
-                    if np.argmax(prediction) == 0: encodeds.append(self.BUY)
-                    else: encodeds.append(self.SELL)
+                    if np.argmax(prediction) == 0:
+                        encodeds.append(self.BUY)
+                    else:
+                        encodeds.append(self.SELL)
 
         return encodeds
 
