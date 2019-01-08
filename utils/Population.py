@@ -59,7 +59,7 @@ class Population(object):
         if self.dump_trades == True:
             self.agents[0].wallet.dump_trades(self.dump_file)
 
-    def evolve(self, inputs_list, prices_list, output_width=15, plot_best=True, season_num=None):
+    def evolve(self, inputs_list, prices_list, output_width=15, plot_best=False, season_num=None):
         print("\n======================\ngeneration number {}\n======================".format(self.generation_number))
 
         self.batch_feed_inputs(inputs_list, prices_list)
@@ -115,7 +115,7 @@ class Population(object):
             try:
                 new_score = ((self.agents[i].score - mi) / den) ** 2
             except:
-                new_score = 0
+                new_score = (self.agents[i].score - mi) ** 2
             self.agents[i].score = new_score
 
         s = 0
@@ -180,9 +180,9 @@ class Population(object):
             profit_arr.append(np.average(profit_tmp))
         profit_arr.sort()
 
-        output_str = "\naverage profit: {0:.9f}%\n".format(np.average(profit_arr))
+        output_str = "\naverage profit: {0:.5f}%\n".format(np.average(profit_arr))
         for score in profit_arr:
-            output_str += "{0:.9f}%".format(score).ljust(12)
+            output_str += "{0:.5f}%".format(score).ljust(12)
             c += 1
             if c % output_width == 0:
                 output_str += "\n"

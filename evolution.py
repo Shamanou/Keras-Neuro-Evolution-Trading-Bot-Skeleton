@@ -12,7 +12,7 @@ markets = ccxt.kraken().load_markets()
 
 def build_model():
     num_inputs = len(ccxt.kraken().fetch_tickers(markets.keys()))
-    hidden_nodes = 16
+    hidden_nodes = 100
     num_outputs = 3
 
     model = Sequential()
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     pop_size = 50
     mutation_rate = 0.05
     mutation_scale = 0.3
-    starting_cash = 50
+    starting_cash = 10
     trading_fee = 0.01
     generations = 150
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     np.random.seed(42)
     inputs = ccxt.kraken().fetch_tickers(markets.keys())
     prices = [float(inputs[key]['info']['a'][0]) for key in inputs]
-    inputs = [np.random.rand(len(inputs)) * 2 - 1] * 50
+    inputs = [np.random.rand(len(inputs)) for x in range(pop_size)]
 
     # build initial population
     pop = Population(pop_size, build_model, mutation_rate, mutation_scale, starting_cash, trading_fee)
