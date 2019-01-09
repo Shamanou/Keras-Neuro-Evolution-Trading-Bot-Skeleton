@@ -179,7 +179,7 @@ class Population(object):
                 profit_tmp.append(agent.wallet.get_swing_earnings(i, prices[i]))
                 profit_tmp.sort()
             profit_arr.append(profit_tmp)
-        profit_arr = np.reshape(profit_arr, (len(profit_arr[0]),len(profit_arr)))
+        profit_arr = np.reshape(profit_arr, (len(profit_arr[0]), len(profit_arr)))
         profit_arr.sort()
 
         output_str = "\naverage profit: {0:.5f}%\n".format(np.average(profit_arr))
@@ -195,27 +195,41 @@ class Population(object):
         self.agents[0].save("saved_agent/best_agent")
 
     def plot_best_agent(self, prices, season_num=None):
-        indexes, wallet_values = [], []
-        for i,hist in enumerate(self.agents[0].wallet.cash_history):
-            indexes.append(i)
-            wallet_values.append(hist)
+        wallet_values = []
+        if self.agents[0].wallet.cash_history:
+            for i, hist in enumerate(self.agents[0].wallet.cash_history):
+                wallet_values.append([i, hist[0], hist[1]])
 
-        plt.clf()
+            plt.clf()
 
-        plt.figure(1)
-        if season_num != None:
-            plt.suptitle("Trading Bot Generation {} Season {}".format(self.generation_number, season_num))
-        else:
-            plt.suptitle("Trading Bot Generation {}".format(self.generation_number))
+            plt.figure(1)
+            if season_num != None:
+                plt.suptitle("Trading Bot Generation {} Season {}".format(self.generation_number, season_num))
+            else:
+                plt.suptitle("Trading Bot Generation {}".format(self.generation_number))
 
-        ax1 = plt.subplot(211)
-        ax1.set_ylabel("Price Graph")
-        ax1.plot(prices)
+            ax1 = plt.subplot(211)
+            ax1.set_ylabel("Price Graph")
+            ax1.plot(prices)
 
-        ax2 = plt.subplot(212, sharex=ax1)
-        ax2.set_ylabel("Cash Wallet Value")
-        ax2.plot(indexes,wallet_values)
+            wallet_values = sorted(wallet_values, key=lambda x: x[1])
 
-        # plt.show()
-        plt.draw()
-        plt.pause(0.001)
+            tmp = wallet_values[0][1]
+            tmp_arr = []
+            arr = []
+            for i, x, y in wallet_values:
+                if tmp == x:
+                    tmp_arr.append(y)
+                else:
+                    arr.append(tmp_arr)
+                    tmp_arr = []
+                tmp = x
+
+            ax2 = plt.subplot(212)
+            ax2.set_ylabel("Cash Wallet Value")
+            for i in range(len(arr)):
+                ax2.plot(range(len(arr[i])), arr[i])
+
+            # plt.show()
+            plt.draw()
+            plt.pause(0.001)

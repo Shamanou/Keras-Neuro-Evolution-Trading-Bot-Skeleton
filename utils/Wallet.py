@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class Wallet:
     def __init__(self, starting_cash, starting_price, trading_fee):
         self.starting_cash = starting_cash
@@ -11,14 +8,14 @@ class Wallet:
         self.starting_price = starting_price
         self.current_buy = [None] * len(starting_price)
         self.old_cash_wallet = [0] * len(starting_price)
-        self.cash_history = [0] * len(starting_price)
+        self.cash_history = []
         self.trade_history = []
 
     def buy(self, idx, price):
         if not self.isHolding[idx]:
             self.current_buy[idx] = price
-            self.btc_wallet[idx] += self.cash_wallet[idx] / price * (1 - self.trading_fee)
-            self.cash_history[idx] = self.cash_wallet[idx]
+            self.btc_wallet[idx] = self.cash_wallet[idx] / price * (1 - self.trading_fee)
+            self.cash_history.append([idx, self.cash_wallet[idx]])
             self.trade_history.append(
                 [idx, price, self.cash_wallet[idx], self.cash_wallet[idx] / price * (1 - self.trading_fee),
                  self.btc_wallet[idx]])
@@ -29,8 +26,8 @@ class Wallet:
 
     def sell(self, idx, price):
         if self.isHolding[idx]:
-            self.cash_wallet[idx] += self.btc_wallet[idx] * price * (1 - self.trading_fee)
-            self.cash_history[idx] = self.cash_wallet[idx]
+            self.cash_wallet[idx] = self.btc_wallet[idx] * price * (1 - self.trading_fee)
+            self.cash_history.append([idx, self.cash_wallet[idx]])
             self.trade_history.append(
                 [idx, price, self.btc_wallet[idx], self.cash_wallet[idx] / self.old_cash_wallet[idx] * 100 - 100,
                  self.btc_wallet[idx]])
