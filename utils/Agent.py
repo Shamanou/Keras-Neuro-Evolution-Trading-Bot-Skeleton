@@ -56,20 +56,19 @@ class Agent(object):
         return encodeds
 
     def batch_act(self, inputs, prices):
+        score = []
+
         predictions = self.model.predict(np.array(inputs))
         encodeds = self.batch_encode_prediction(predictions)
 
         # simulate trades based on trade signals
         for idx, encoded in enumerate(encodeds):
             if encoded == self.BUY:
-                self.wallet.buy(idx, prices[idx])
+                self.wallet.buy(inputs[idx][0], prices[inputs[idx][0]])
             elif encoded == self.SELL:
-                self.wallet.sell(idx, prices[idx])
+                self.wallet.sell(inputs[idx][0], prices[inputs[idx][0]])
 
-        # evaluate score
-        score = []
-        for i in range(len(prices)):
-            score.append(self.wallet.get_swing_earnings(i, prices[i]))
+            score.append(self.wallet.get_swing_earnings(inputs[idx][0], prices[inputs[idx][0]]))
         self.score = np.average(score)
 
     def save(self, filename):

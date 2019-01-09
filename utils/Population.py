@@ -59,7 +59,7 @@ class Population(object):
         if self.dump_trades == True:
             self.agents[0].wallet.dump_trades(self.dump_file)
 
-    def evolve(self, inputs_list, prices_list, output_width=15, plot_best=False, season_num=None):
+    def evolve(self, inputs_list, prices_list, output_width=15, plot_best=True, season_num=None):
         print("\n======================\ngeneration number {}\n======================".format(self.generation_number))
 
         self.batch_feed_inputs(inputs_list, prices_list)
@@ -177,12 +177,14 @@ class Population(object):
             profit_tmp = []
             for i in range(len(prices)):
                 profit_tmp.append(agent.wallet.get_swing_earnings(i, prices[i]))
-            profit_arr.append(np.average(profit_tmp))
+                profit_tmp.sort()
+            profit_arr.append(profit_tmp)
+        profit_arr = np.reshape(profit_arr, (len(profit_arr[0]),len(profit_arr)))
         profit_arr.sort()
 
         output_str = "\naverage profit: {0:.5f}%\n".format(np.average(profit_arr))
         for score in profit_arr:
-            output_str += "{0:.5f}%".format(score).ljust(12)
+            output_str += "{0:.5f}%".format(np.average(score)).ljust(12)
             c += 1
             if c % output_width == 0:
                 output_str += "\n"
@@ -194,9 +196,9 @@ class Population(object):
 
     def plot_best_agent(self, prices, season_num=None):
         indexes, wallet_values = [], []
-        for hist in self.agents[0].wallet.cash_history:
-            indexes.append(hist[0])
-            wallet_values.append(hist[1])
+        for i,hist in enumerate(self.agents[0].wallet.cash_history):
+            indexes.append(i)
+            wallet_values.append(hist)
 
         plt.clf()
 
@@ -212,7 +214,7 @@ class Population(object):
 
         ax2 = plt.subplot(212, sharex=ax1)
         ax2.set_ylabel("Cash Wallet Value")
-        ax2.plot(indexes, wallet_values)
+        ax2.plot(indexes,wallet_values)
 
         # plt.show()
         plt.draw()

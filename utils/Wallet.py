@@ -11,14 +11,14 @@ class Wallet:
         self.starting_price = starting_price
         self.current_buy = [None] * len(starting_price)
         self.old_cash_wallet = [0] * len(starting_price)
-        self.cash_history = []
+        self.cash_history = [0] * len(starting_price)
         self.trade_history = []
 
     def buy(self, idx, price):
         if not self.isHolding[idx]:
             self.current_buy[idx] = price
-            self.btc_wallet[idx] = self.cash_wallet[idx] / price * (1 - self.trading_fee)
-            self.cash_history.append([idx, self.cash_wallet[idx]])
+            self.btc_wallet[idx] += self.cash_wallet[idx] / price * (1 - self.trading_fee)
+            self.cash_history[idx] = self.cash_wallet[idx]
             self.trade_history.append(
                 [idx, price, self.cash_wallet[idx], self.cash_wallet[idx] / price * (1 - self.trading_fee),
                  self.btc_wallet[idx]])
@@ -29,8 +29,8 @@ class Wallet:
 
     def sell(self, idx, price):
         if self.isHolding[idx]:
-            self.cash_wallet[idx] = self.btc_wallet[idx] * price * (1 - self.trading_fee)
-            self.cash_history.append([idx, self.cash_wallet[idx]])
+            self.cash_wallet[idx] += self.btc_wallet[idx] * price * (1 - self.trading_fee)
+            self.cash_history[idx] = self.cash_wallet[idx]
             self.trade_history.append(
                 [idx, price, self.btc_wallet[idx], self.cash_wallet[idx] / self.old_cash_wallet[idx] * 100 - 100,
                  self.btc_wallet[idx]])
@@ -38,15 +38,12 @@ class Wallet:
             self.btc_wallet[idx] = 0
             self.isHolding[idx] = False
 
-    def get_holding_earnings(self,final_price):
-        score = []
-        for i in range(len(self.starting_price)):
-            score.append((final_price / self.starting_price[i]) * 100 - 100)
-        return abs(np.average(score))
+    def get_holding_earnings(self, final_price):
+        return (final_price / self.starting_price[-1]) * 100 - 100
 
     def get_swing_earnings(self, idx, final_price):
         self.sell(idx, final_price)
-        return abs((self.cash_wallet[idx] / self.starting_cash) * 100 - 100)
+        return (self.cash_wallet[idx] / self.starting_cash) * 100 - 100
 
     def dump_trades(self, filename):
         f = open(filename, 'w')
