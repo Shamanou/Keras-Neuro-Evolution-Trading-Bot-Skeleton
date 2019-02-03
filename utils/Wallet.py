@@ -4,7 +4,7 @@ class Wallet:
         self.trading_fee = trading_fee
         self.cash_wallet = [starting_cash] * len(starting_price)
         self.btc_wallet = [0] * len(starting_price)
-        self.isHolding = [False] * len(starting_price)
+        self.is_holding = [False] * len(starting_price)
         self.starting_price = starting_price
         self.current_buy = [None] * len(starting_price)
         self.old_cash_wallet = [0] * len(starting_price)
@@ -12,7 +12,7 @@ class Wallet:
         self.trade_history = []
 
     def buy(self, idx, price):
-        if not self.isHolding[idx]:
+        if not self.is_holding[idx]:
             self.current_buy[idx] = price
             self.btc_wallet[idx] = self.cash_wallet[idx] / price * (1 - self.trading_fee)
             self.cash_history.append([idx, self.cash_wallet[idx]])
@@ -22,10 +22,10 @@ class Wallet:
 
             self.old_cash_wallet[idx] = self.cash_wallet[idx]
             self.cash_wallet[idx] = 0
-            self.isHolding[idx] = True
+            self.is_holding[idx] = True
 
     def sell(self, idx, price):
-        if self.isHolding[idx]:
+        if self.is_holding[idx]:
             self.cash_wallet[idx] = self.btc_wallet[idx] * price * (1 - self.trading_fee)
             self.cash_history.append([idx, self.cash_wallet[idx]])
             self.trade_history.append(
@@ -33,7 +33,7 @@ class Wallet:
                  self.btc_wallet[idx]])
 
             self.btc_wallet[idx] = 0
-            self.isHolding[idx] = False
+            self.is_holding[idx] = False
 
     def get_holding_earnings(self, final_price):
         return (final_price / self.starting_price[-1]) * 100 - 100
@@ -60,13 +60,13 @@ class Wallet:
 
 
 if __name__ == '__main__':
-    starting_cash = 10
-    starting_price = [10]
-    trading_fee = 0.01
+    STARTING_CASH = 10
+    STARTING_PRICE = [10]
+    TRADING_FEE = 0.01
 
-    wallet = Wallet(starting_cash, starting_price, trading_fee)
+    WALLET = Wallet(STARTING_CASH, STARTING_PRICE, TRADING_FEE)
 
-    wallet.buy(0, 15)
-    wallet.sell(0, 20)
+    WALLET.buy(0, 15)
+    WALLET.sell(0, 20)
 
-    print(wallet.get_swing_earnings(0, -50))
+    print(WALLET.get_swing_earnings(0, -50))

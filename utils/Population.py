@@ -183,11 +183,11 @@ class Population(object):
         profit_arr.sort()
 
         output_str = "\nmaximum profit: {0:.5f}%\n".format(np.average(profit_arr))
-        for score in profit_arr:
-            output_str += "{0:.5f}%".format(max(score)).ljust(12)
-            c += 1
-            if c % output_width == 0:
-                output_str += "\n"
+        # for score in profit_arr:
+        #     output_str += "{0:.5f}%".format(max(score)).ljust(12)
+        #     c += 1
+        #     if c % output_width == 0:
+        #         output_str += "\n"
         print(output_str)
 
     def save_best_agent(self):

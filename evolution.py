@@ -7,7 +7,7 @@ from keras.models import Sequential
 
 from utils.Population import Population
 
-markets = ccxt.kraken().load_markets()
+MARKETS = ccxt.kraken().load_markets()
 
 
 def build_model():
@@ -29,25 +29,25 @@ if __name__ == '__main__':
 
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-    pop_size = 50
-    mutation_rate = 0.05
-    mutation_scale = 0.3
-    starting_cash = 2.5
-    trading_fee = 0.01
-    generations = 150
+    POP_SIZE = 100
+    MUTATION_RATE = 0.05
+    MUTATION_SCALE = 0.3
+    STARTING_CASH = 2.5
+    TRADING_FEE = 0.01
+    GENERATIONS = 150
 
     # generate random test data
     np.random.seed(42)
-    inputs = ccxt.kraken().fetch_tickers(markets.keys())
+    inputs = ccxt.kraken().fetch_tickers(MARKETS.keys())
     prices = [float(inputs[key]['info']['a'][0]) for key in inputs]
-    inputs = np.random.rand(len(inputs),2).tolist()
-    inputs = [ (int(i*len(inputs)),x*10) for i,x in inputs ]
+    inputs = np.random.rand(len(inputs), 2).tolist()
+    inputs = [(int(i * len(inputs)), x * 10) for i, x in inputs]
 
     # build initial population
-    pop = Population(pop_size, build_model, mutation_rate, mutation_scale, starting_cash, trading_fee)
+    pop = Population(POP_SIZE, build_model, MUTATION_RATE, MUTATION_SCALE, STARTING_CASH, TRADING_FEE)
 
     # run defined number of evolutions
-    for i in range(generations):
+    for i in range(GENERATIONS):
         start = time()
         pop.evolve(inputs, prices)
         print('\n\nDuration: {0:.2f}s'.format(time() - start))

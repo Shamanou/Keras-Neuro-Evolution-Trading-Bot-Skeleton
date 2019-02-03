@@ -5,6 +5,10 @@ import numpy as np
 
 from utils.Wallet import Wallet
 
+BUY = 1
+SELL = 2
+SLEEP = 3
+
 
 class Agent(object):
     def __init__(self, population, agent_id, inherited_model=None):
@@ -17,10 +21,6 @@ class Agent(object):
         self.fitness = 0
         self.model = None
 
-        self.BUY = 1
-        self.SELL = 2
-        self.SLEEP = 3
-
         # if mutating from an existing model
         if inherited_model:
             self.model = inherited_model
@@ -30,31 +30,31 @@ class Agent(object):
 
     def batch_encode_prediction(self, predictions):
         # converting output to trade signals
-        encodeds = []
+        encoded = []
 
         if self.population.has_one_output:
             for prediction in predictions:
                 if prediction[0] >= 0:
-                    encodeds.append(self.BUY)
+                    encoded.append(BUY)
                 else:
-                    encodeds.append(self.SELL)
+                    encoded.append(SELL)
         else:
-            if (self.population.has_sleep_functionality):
+            if self.population.has_sleep_functionality:
                 for prediction in predictions:
                     if np.argmax(prediction) == 0:
-                        encodeds.append(self.BUY)
+                        encoded.append(BUY)
                     elif np.argmax(prediction) == 1:
-                        encodeds.append(self.SELL)
+                        encoded.append(SELL)
                     else:
-                        encodeds.append(self.SLEEP)
+                        encoded.append(SLEEP)
             else:
                 for prediction in predictions:
                     if np.argmax(prediction) == 0:
-                        encodeds.append(self.BUY)
+                        encoded.append(BUY)
                     else:
-                        encodeds.append(self.SELL)
+                        encoded.append(SELL)
 
-        return encodeds
+        return encoded
 
     def batch_act(self, inputs, prices):
         score = []
@@ -64,9 +64,9 @@ class Agent(object):
 
         # simulate trades based on trade signals
         for idx, encoded in enumerate(encodeds):
-            if encoded == self.BUY:
+            if encoded == BUY:
                 self.wallet.buy(inputs[idx][0], prices[inputs[idx][0]])
-            elif encoded == self.SELL:
+            elif encoded == SELL:
                 self.wallet.sell(inputs[idx][0], prices[inputs[idx][0]])
 
             score.append(self.wallet.get_swing_earnings(inputs[idx][0], prices[inputs[idx][0]]))
