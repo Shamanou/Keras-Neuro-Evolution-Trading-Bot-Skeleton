@@ -38,16 +38,16 @@ if __name__ == '__main__':
 
     # generate random test data
     np.random.seed(42)
-    inputs = ccxt.kraken().fetch_tickers(MARKETS.keys())
-    prices = [float(inputs[key]['info']['a'][0]) for key in inputs]
-    inputs = np.random.rand(len(inputs), 2).tolist()
-    inputs = [(int(i * len(inputs)), x * 10) for i, x in inputs]
+    INPUTS = ccxt.kraken().fetch_tickers(MARKETS.keys())
+    PRICES = [float(INPUTS[key]['info']['a'][0]) for key in INPUTS]
+    INPUTS = np.random.rand(len(INPUTS), 2).tolist()
+    INPUTS = [(int(i * len(INPUTS)), x * 10) for i, x in INPUTS]
 
     # build initial population
-    pop = Population(POP_SIZE, build_model, MUTATION_RATE, MUTATION_SCALE, STARTING_CASH, TRADING_FEE)
+    POP = Population(POP_SIZE, build_model, MUTATION_RATE, MUTATION_SCALE, STARTING_CASH, TRADING_FEE)
 
     # run defined number of evolutions
     for i in range(GENERATIONS):
         start = time()
-        pop.evolve(inputs, prices)
+        POP.evolve(INPUTS, PRICES)
         print('\n\nDuration: {0:.2f}s'.format(time() - start))
