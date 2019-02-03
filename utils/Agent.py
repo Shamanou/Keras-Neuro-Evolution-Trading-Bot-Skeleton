@@ -58,8 +58,11 @@ class Agent(object):
 
     def batch_act(self, inputs, prices):
         score = []
+        input_vector = np.zeros((len(inputs), len(prices)))
+        for index, input in enumerate(inputs):
+            input_vector[index][input[0]] = input[1]
 
-        predictions = self.model.predict(np.array(inputs))
+        predictions = self.model.predict(input_vector)
         encodeds = self.batch_encode_prediction(predictions)
 
         # simulate trades based on trade signals

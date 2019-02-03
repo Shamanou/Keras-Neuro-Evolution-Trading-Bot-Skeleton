@@ -11,7 +11,7 @@ MARKETS = ccxt.kraken().load_markets()
 
 
 def build_model():
-    num_inputs = 2
+    num_inputs = 73
     hidden_nodes = 100
     num_outputs = 3
 
