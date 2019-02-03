@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-    POP_SIZE = 100
+    POP_SIZE = 50
     MUTATION_RATE = 0.05
     MUTATION_SCALE = 0.3
     STARTING_CASH = 2.5

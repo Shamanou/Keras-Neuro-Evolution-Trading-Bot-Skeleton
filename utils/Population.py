@@ -56,7 +56,7 @@ class Population(object):
         self.sort_by_decreasing_fitness()
         if plot_best:
             self.plot_best_agent(prices_list, season_num)
-        if self.dump_trades == True:
+        if self.dump_trades:
             self.agents[0].wallet.dump_trades(self.dump_file)
 
     def evolve(self, inputs_list, prices_list, output_width=15, plot_best=True, season_num=None):
@@ -68,7 +68,7 @@ class Population(object):
         self.sort_by_decreasing_fitness()
         if plot_best:
             self.plot_best_agent(prices_list, season_num)
-        if self.dump_trades == True:
+        if self.dump_trades:
             self.agents[0].wallet.dump_trades(self.dump_file)
 
         self.save_best_agent()
@@ -113,7 +113,7 @@ class Population(object):
         for i in range(len(self.agents)):
             try:
                 new_score = ((self.agents[i].score - mi) / den) ** 2
-            except Exception as ex:
+            except:
                 new_score = (self.agents[i].score - mi) ** 2
             self.agents[i].score = new_score
 
