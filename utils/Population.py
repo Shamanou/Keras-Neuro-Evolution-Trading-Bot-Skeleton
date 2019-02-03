@@ -111,10 +111,9 @@ class Population(object):
         den = ma - mi
 
         for i in range(len(self.agents)):
-            new_score = None
             try:
                 new_score = ((self.agents[i].score - mi) / den) ** 2
-            except:
+            except Exception as ex:
                 new_score = (self.agents[i].score - mi) ** 2
             self.agents[i].score = new_score
 
@@ -140,28 +139,28 @@ class Population(object):
 
     def generate_next_generation(self):
         # find models to mutate to next generation
-        newAgents_idx = []
+        new_agents_idx = []
         for i in range(self.pop_size):
-            newAgents_idx.append(self.pool_selection())
+            new_agents_idx.append(self.pool_selection())
 
         # temporarily save models and clear session
         configs, weights = [], []
-        for model_idx in newAgents_idx:
+        for model_idx in new_agents_idx:
             configs.append(self.agents[model_idx].model.to_json())
             weights.append(self.agents[model_idx].model.get_weights())
 
         K.clear_session()
 
         # reload models
-        newAgents = []
+        new_agents = []
         for i in range(self.pop_size):
             # print("\rcreating next generation {0:.2f}%...".format((i + 1) / self.pop_size * 100))
             loaded = model_from_json(configs[i])
             loaded.set_weights(weights[i])
-            newAgents.append(Agent(self, i, inherited_model=loaded))
+            new_agents.append(Agent(self, i, inherited_model=loaded))
         print("")
 
-        self.agents = newAgents
+        self.agents = new_agents
         self.generation_number += 1
 
         # mutation scale decay
