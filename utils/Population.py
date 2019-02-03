@@ -48,7 +48,7 @@ class Population(object):
         for i in range(self.pop_size):
             self.agents.append(Agent(self, i, inherited_model=model))
 
-    def validate(self, inputs_list, prices_list, output_width=5, plot_best=True):
+    def validate(self, inputs_list, prices_list, output_width=5, plot_best=False):
         season_num = 10
         self.batch_feed_inputs(inputs_list, prices_list)
         self.print_profits(output_width, prices_list)
@@ -59,7 +59,7 @@ class Population(object):
         if self.dump_trades:
             self.agents[0].wallet.dump_trades(self.dump_file)
 
-    def evolve(self, inputs_list, prices_list, output_width=15, plot_best=True, season_num=None):
+    def evolve(self, inputs_list, prices_list, output_width=15, plot_best=False, season_num=None):
         print("\n======================\ngeneration number {}\n======================".format(self.generation_number))
 
         self.batch_feed_inputs(inputs_list, prices_list)
