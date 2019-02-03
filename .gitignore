@@ -1,2 +1,8 @@
 # cache files
 *.pyc
+.idea/Keras-Neuro-Evolution-Trading-Bot-Skeleton.iml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+saved_agent/
