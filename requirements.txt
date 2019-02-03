@@ -1,5 +1,4 @@
 keras
 ccxt
 numpy
-tensorflow
 matplotlib

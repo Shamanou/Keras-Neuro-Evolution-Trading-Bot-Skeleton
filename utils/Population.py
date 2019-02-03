@@ -8,7 +8,7 @@ from keras.models import model_from_json
 
 from utils.Agent import Agent
 
-markets = ccxt.kraken().load_markets()
+MARKETS = ccxt.kraken().load_markets()
 
 
 class Population(object):
@@ -21,7 +21,7 @@ class Population(object):
         self.mutation_rate = mutation_rate
         self.mutation_scale = mutation_scale
         self.starting_cash = starting_cash
-        inputs = ccxt.kraken().fetch_tickers(markets.keys())
+        inputs = ccxt.kraken().fetch_tickers(MARKETS.keys())
         self.starting_price = [float(inputs[key]['info']['a'][0]) for key in inputs]
         self.trading_fee = trading_fee
 
@@ -36,9 +36,9 @@ class Population(object):
 
         plt.ion()
 
-        if big_bang == True:
+        if big_bang:
             for i in range(self.pop_size):
-                print("\rbuilding agents {:.2f}%...".format((i + 1) / self.pop_size * 100), end="")
+                # print("\rbuilding agents {:.2f}%...".format((i + 1) / self.pop_size * 100))
                 agent = Agent(self, i)
                 self.agents.append(agent)
         print("")
@@ -54,7 +54,7 @@ class Population(object):
         self.print_profits(output_width, prices_list)
         self.normalize_fitness()
         self.sort_by_decreasing_fitness()
-        if plot_best == True:
+        if plot_best:
             self.plot_best_agent(prices_list, season_num)
         if self.dump_trades == True:
             self.agents[0].wallet.dump_trades(self.dump_file)
@@ -66,7 +66,7 @@ class Population(object):
         self.print_profits(output_width, prices_list)
         self.normalize_fitness()
         self.sort_by_decreasing_fitness()
-        if plot_best == True:
+        if plot_best:
             self.plot_best_agent(prices_list, season_num)
         if self.dump_trades == True:
             self.agents[0].wallet.dump_trades(self.dump_file)
@@ -78,7 +78,7 @@ class Population(object):
         inputs_seasons = np.array_split(inputs_list, num_seasons)
         prices_seasons = np.array_split(prices_list, num_seasons)
 
-        if roulette == False:
+        if not roulette:
             cnt = 0
             for inputs, prices in zip(inputs_seasons, prices_seasons):
                 for i in range(epochs_per_season):
@@ -97,7 +97,7 @@ class Population(object):
     def batch_feed_inputs(self, inputs_list, prices_list):
         for i in range(len(self.agents)):
             self.agents[i].batch_act(inputs_list, prices_list)
-            print("\rFeeding inputs {:.2f}%...".format((i + 1) / self.pop_size * 100), end="")
+            # print("\rFeeding inputs {:.2f}%...".format((i + 1) / self.pop_size * 100))
 
     def normalize_fitness(self):
         print("normalizing fitness...")
@@ -155,7 +155,7 @@ class Population(object):
         # reload models
         newAgents = []
         for i in range(self.pop_size):
-            print("\rcreating next generation {0:.2f}%...".format((i + 1) / self.pop_size * 100), end="")
+            # print("\rcreating next generation {0:.2f}%...".format((i + 1) / self.pop_size * 100))
             loaded = model_from_json(configs[i])
             loaded.set_weights(weights[i])
             newAgents.append(Agent(self, i, inherited_model=loaded))
@@ -182,9 +182,9 @@ class Population(object):
         profit_arr = np.reshape(profit_arr, (len(profit_arr[0]), len(profit_arr)))
         profit_arr.sort()
 
-        output_str = "\naverage profit: {0:.5f}%\n".format(np.average(profit_arr))
+        output_str = "\nmaximum profit: {0:.5f}%\n".format(np.average(profit_arr))
         for score in profit_arr:
-            output_str += "{0:.5f}%".format(np.average(score)).ljust(12)
+            output_str += "{0:.5f}%".format(max(score)).ljust(12)
             c += 1
             if c % output_width == 0:
                 output_str += "\n"
