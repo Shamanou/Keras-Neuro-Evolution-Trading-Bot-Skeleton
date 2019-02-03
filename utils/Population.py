@@ -226,8 +226,8 @@ class Population(object):
 
             ax2 = plt.subplot(212)
             ax2.set_ylabel("Cash Wallet Value")
-            for i in range(len(arr)):
-                ax2.plot(range(len(arr[i])), arr[i])
+            for el in arr:
+                ax2.plot(range(len(el)), el)
 
             # plt.show()
             plt.draw()
